@@ -1,9 +1,9 @@
 FROM php:8.0.2-apache
 ENV LOCALE="en_US.UTF-8"
-ENV DB_HOSTNAME=$DB_HOSTNAME
-ENV DB_NAME=$DB_NAME
-ENV DB_USERNAME=$DB_USERNAME
-ENV DB_PASSWORD=$DB_PASSWORD
+ARG DB_HOSTNAME=${DB_HOSTNAME}
+ARG DB_NAME=${DB_NAME}
+ARG DB_USERNAME=${DB_USERNAME}
+ARG DB_PASSWORD=${DB_PASSWORD}
 RUN echo "ServerName localhost" >> /etc/apache2/apache2.conf
 RUN apt-get update \
     && apt-get install -y cron curl gettext git libxml2 libxml2-dev locales tzdata \
@@ -27,7 +27,7 @@ RUN cd /var/www/html \
     && git pull
 RUN echo "<?php" \
     "\$web_root='';" \
-    "\$dbhostname='${DB_HOSTNAME}}';" \
+    "\$dbhostname='${DB_HOSTNAME}';" \
     "\$dbname='${DB_NAME}';" \
     "\$dbusername='${DB_USERNAME}';" \
     "\$dbpassword='${DB_PASSWORD}';" \
