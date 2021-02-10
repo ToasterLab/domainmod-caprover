@@ -1,5 +1,9 @@
 FROM php:8.0.2-apache
 ENV LOCALE="en_US.UTF-8"
+ENV DB_HOSTNAME=$DB_HOSTNAME
+ENV DB_NAME=$DB_NAME
+ENV DB_USERNAME=$DB_USERNAME
+ENV DB_PASSWORD=$DB_PASSWORD
 RUN echo "ServerName localhost" >> /etc/apache2/apache2.conf
 RUN apt-get update \
     && apt-get install -y cron curl gettext git libxml2 libxml2-dev locales tzdata \
@@ -21,7 +25,14 @@ ENV LC_ALL $LOCALE
 RUN cd /var/www/html \
     && git clone https://github.com/domainmod/domainmod.git . \
     && git pull
-COPY domainmod/config.inc.php /var/www/html/_includes
+RUN echo "<?php" \
+    "\$web_root='';" \
+    "\$dbhostname='${DB_HOSTNAME}}';" \
+    "\$dbname='${DB_NAME}';" \
+    "\$dbusername='${DB_USERNAME}';" \
+    "\$dbpassword='${DB_PASSWORD}';" \
+    "?>" \
+    >> /var/www/html/_includes/config.inc.php 
 RUN chmod 777 /var/www/html/temp
 RUN service apache2 restart
 EXPOSE 80 443
